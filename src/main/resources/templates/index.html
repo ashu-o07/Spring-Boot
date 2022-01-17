@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html>
+
+<head>
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+		integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+
+
+<body>
+
+	<nav class="navbar navbar-dark bg-dark">
+		<a class="navbar-brand" href="/">Company Asset Management Portal </a>
+	</nav>
+
+
+	<div class="m-5 text-center d-flex justify-content-center">
+
+
+		<div class=" my-2 mt-5 " style="width: 50rem;">
+
+
+			<h2 class="mb-3">Employee Data</h2>
+
+
+			<table border="1" class="table table-dark table-sm table-responsive-sm">
+				<tr>
+					<th>Employee ID</th>
+					<th>Full Name</th>
+					<th>Designation</th>
+				</tr>
+				<tr th:each="employee : ${listEmp}">
+					<td th:text="${employee.employee_id}"></td>
+					<td th:text="${employee.full_name}"></td>
+					<td th:text="${employee.designation}"></td>
+				</tr>
+
+			</table>
+		</div>
+
+
+		<div class="  mt-5">
+
+
+			<div class=" card mt-5 ml-5" style="width: 18rem; height:8rem;"><a href="/api/asset" style="height:100%;"
+					class="btn btn-dark btn-square-md p-5">Manage Asset</a></div>
+			<div class=" card mt-3 ml-5" style="width: 18rem; height:8rem;"><a href="/api/category" style="height:100%;"
+					class="btn btn-dark btn-square-md p-5">Manage Category</a></div>
+		</div>
+	</div>
+	</div>
+
+
+</body>
+
+</html>

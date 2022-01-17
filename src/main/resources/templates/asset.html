@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html>
+
+<head>
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+		integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+
+
+<body>
+
+	<nav class="navbar navbar-dark bg-dark">
+		<a class="navbar-brand" href="/">Company Asset Management Portal </a>
+	</nav>
+	<div class="m-5 text-center d-flex justify-content-center">
+
+
+		<div class=" my-2 mt-5 mr-5" style="width: 50rem;">
+			<form class="form-inline   mt-5" th:action="@{/api/searchAsset}" method="get">
+
+				<div class="form-group  mb-2 ">
+					<label for="srch" class="sr-only">Search</label>
+					<input class="form-control" id="srch" placeholder="Search" type="text" name="keyword"
+						th:value="${keyword}">
+				</div>
+				<button type="submit" class="btn btn-info mb-2">Search</button>
+				<a th:href="@{/api/asset/}" class="btn btn-primary ml-2 mb-2">reset</a>
+			</form>
+
+
+			<h2 class="mb-3"> Assets</h2>
+
+
+			<table border="1" class="table table-dark table-sm table-responsive-sm">
+				<tr>
+
+					<th>Name</th>
+					<th>Purchase Date</th>
+					<th>Condition Notes</th>
+					<th>Category</th>
+					<th>Assignment Status</th>
+					<th></th>
+				</tr>
+				<tr th:each="asset : ${list}">
+
+					<td th:text="${asset.name}"></td>
+					<td th:text="${asset.date}"></td>
+					<td th:text="${asset.notes}"></td>
+					<td th:text="${asset.category.name}"></td>
+					<td th:text="${asset.status}"></td>
+					<td> <a th:href="@{/api/asset/{id}(id=${asset.asset_id})}" class="btn btn-primary">Update</a>
+
+					</td>
+
+					<span th:if="not ${asset.status==T(com.example.demo.model.AssetStatus).Assigned}">
+						<td><a th:href="@{/api/assignAsset/{id}(id=${asset.asset_id})}"
+								class="btn btn-primary">Assign</a></td>
+					</span>
+					<span th:if=" ${ asset.status==T(com.example.demo.model.AssetStatus).Assigned}">
+						<td><a th:href="@{/api/recoverAsset/{id}(id=${asset.asset_id})}"
+								class="btn btn-primary">Recover</a></td>
+					</span>
+					<span th:if="not ${ asset.status==T(com.example.demo.model.AssetStatus).Assigned}">
+						<td> <a th:href="@{/api/deleteAsset/{id}(id=${asset.asset_id})}"
+								class="btn btn-danger">Delete</a></td>
+					</span>
+					<span th:if=" ${ asset.status==T(com.example.demo.model.AssetStatus).Assigned}">
+						<td> Delete</td>
+					</span>
+
+
+				</tr>
+
+			</table>
+			<span th:if="${#lists.isEmpty(list)}">Nothing to show</span>
+		</div>
+
+
+		<div class=" mt-5 ml-5">
+
+
+			<th:block th:switch="${identifyPage}">
+				<div th:case="0">
+					<form action="#" th:action="@{/api/asset}" th:object="${asset}" method="POST">
+						<input type="text" th:field="*{name}" placeholder="Asset Name" class="form-control m-1 "
+							required>
+
+						<input type="text" th:field="*{date}" placeholder="Purchase date" class="form-control m-1"
+							required>
+
+						<input type="text" th:field="*{notes}" placeholder="Condition Notes" class="form-control m-1"
+							required>
+						<p class="text-left">Select category:</p>
+						<select name="Category" class="form-control m-1" placeholder="Select Category" id="catList"
+							required>
+
+							<option th:each="cat : ${cat}" th:text="${cat.name}" th:value="${cat.category_id}" />
+						</select>
+						<span th:if="not ${#lists.isEmpty(cat)}">
+							<button type="submit" class="btn btn-info m-3"> Add a new Asset</button>
+
+						</span>
+
+
+						<span th:if="${#lists.isEmpty(cat)}">
+							<button type="submit" class="btn btn-info m-3" disabled> Add a new Asset</button>
+							<a th:href="@{/api/category/}">Add a category first</a>
+						</span>
+					</form>
+				</div>
+				<div th:case="1">
+					<form action="#" th:action="@{/api/UpdateAsset}" th:object="${asset}" method="POST">
+						<input type="hidden" th:field="*{asset_id}" />
+						<input type="text" th:field="*{name}" class="form-control m-1 " required>
+
+						<input type="text" th:field="*{date}" class="form-control m-1" required>
+
+						<input type="text" th:field="*{notes}" class="form-control m-1" required>
+						<p class="text-left">Select category:</p>
+						<select name="Category" class="form-control m-1" id="catList" required>
+
+							<option th:each="cat : ${cat}" th:text="${cat.name}" th:value="${cat.category_id}" />
+						</select>
+						<button type="submit" class="btn btn-info m-3"> Update</button>
+
+
+
+					</form>
+				</div>
+				<div th:case="2">
+					<h3><span th:text="${asset.name} " />
+						<h3 />
+						<form action="#" th:action="@{/api/assignAsset}" th:object="${asset}" method="POST">
+
+							<input type="hidden" th:field="*{asset_id}" />
+							<input type="hidden" th:field="*{name}">
+
+							<input type="hidden" th:field="*{date}">
+
+							<input type="hidden" th:field="*{notes}">
+							<input type="hidden" th:field="*{category}">
+							<p class="text-left">Select Employee:</p>
+							<select name="Category" class="form-control m-1" placeholder="Select Category" id="catList">
+
+
+								<option th:each="emp : ${emp}" th:text="${emp.full_name}"
+									th:value="${emp.employee_id}" />
+							</select>
+							<button type="submit" class="btn btn-info m-3"> Assign</button>
+						</form>
+				</div>
+			</th:block>
+		</div>
+	</div>
+	</div>
+
+
+</body>
+
+</html>
